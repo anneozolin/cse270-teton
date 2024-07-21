@@ -17,30 +17,58 @@ class TestSmokeTest():
     options.add_argument("--headless=new")
     self.driver = webdriver.Chrome(options=options)
     self.vars = {}
-  
+    
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_smokeTest(self):
+  def test_homePage(self):
     self.driver.get("http://127.0.0.1:5500/teton/1.6/index.html")
-    self.driver.set_window_size(1400, 835)
+    self.driver.set_window_size(1552, 832)
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".header-logo img")
     assert len(elements) > 0
     assert self.driver.find_element(By.CSS_SELECTOR, ".header-title > h1").text == "Teton Idaho"
     assert self.driver.find_element(By.CSS_SELECTOR, ".header-title > h2").text == "Chamber of Commerce"
     assert self.driver.title == "Teton Idaho CoC"
+    self.driver.find_element(By.CSS_SELECTOR, "body").click()
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".spotlight1")
     assert len(elements) > 0
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".spotlight2")
     assert len(elements) > 0
     elements = self.driver.find_elements(By.LINK_TEXT, "Join Us!")
     assert len(elements) > 0
-    self.driver.find_element(By.LINK_TEXT, "Join Us!").click()
+    elements = self.driver.find_elements(By.LINK_TEXT, "Join Us")
+    assert len(elements) > 0
+    self.driver.find_element(By.LINK_TEXT, "Join Us").click()
+  
+  def test_directoryPage(self):
+    self.driver.get("http://127.0.0.1:5500/teton/1.6/index.html")
+    self.driver.set_window_size(1520, 801)
     self.driver.find_element(By.LINK_TEXT, "Directory").click()
     self.driver.find_element(By.ID, "directory-grid").click()
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".gold-member:nth-child(9) > p:nth-child(2)")
+    assert len(elements) > 0
     assert self.driver.find_element(By.CSS_SELECTOR, ".gold-member:nth-child(9) > p:nth-child(2)").text == "Teton Turf and Tree"
     self.driver.find_element(By.ID, "directory-list").click()
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".gold-member:nth-child(9) > p:nth-child(2)")
+    assert len(elements) > 0
     assert self.driver.find_element(By.CSS_SELECTOR, ".gold-member:nth-child(9) > p:nth-child(2)").text == "Teton Turf and Tree"
+  
+  def test_adminPage(self):
+    self.driver.get("http://127.0.0.1:5500/teton/1.6/index.html")
+    self.driver.set_window_size(1523, 803)
+    self.driver.find_element(By.LINK_TEXT, "Admin").click()
+    elements = self.driver.find_elements(By.ID, "username")
+    assert len(elements) > 0
+    self.driver.find_element(By.ID, "username").click()
+    self.driver.find_element(By.ID, "username").send_keys("anelisa.ferreira")
+    self.driver.find_element(By.ID, "password").click()
+    self.driver.find_element(By.ID, "password").send_keys("1233456")
+    self.driver.find_element(By.CSS_SELECTOR, ".mysubmit:nth-child(4)").click()
+    assert self.driver.find_element(By.CSS_SELECTOR, ".errorMessage").text == "Invalid username and password."
+  
+  def test_joinPage(self):
+    self.driver.get("http://127.0.0.1:5500/teton/1.6/index.html")
+    self.driver.set_window_size(1522, 802)
     self.driver.find_element(By.LINK_TEXT, "Join").click()
     elements = self.driver.find_elements(By.NAME, "fname")
     assert len(elements) > 0
@@ -54,13 +82,4 @@ class TestSmokeTest():
     self.driver.find_element(By.NAME, "submit").click()
     elements = self.driver.find_elements(By.NAME, "email")
     assert len(elements) > 0
-    self.driver.find_element(By.LINK_TEXT, "Admin").click()
-    elements = self.driver.find_elements(By.ID, "username")
-    assert len(elements) > 0
-    self.driver.find_element(By.ID, "username").click()
-    self.driver.find_element(By.ID, "username").send_keys("anelisa.ferreira")
-    self.driver.find_element(By.ID, "password").click()
-    self.driver.find_element(By.ID, "password").send_keys("123456")
-    self.driver.find_element(By.CSS_SELECTOR, ".mysubmit:nth-child(4)").click()
-    assert self.driver.find_element(By.CSS_SELECTOR, ".errorMessage").text == "Invalid username and password."
   
